@@ -3,8 +3,9 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
 
-class User extends JsonResource
+class MessageResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,6 +15,11 @@ class User extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+      return [
+        'id' => $this->id,
+        'body' => $this->body,
+        'user' => new UserBasicResource($this->user),
+        'createdAt' => $this->created_at->diffForHumans(),
+      ];
     }
 }

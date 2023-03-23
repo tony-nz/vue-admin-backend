@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AuthLogin extends FormRequest
+class StoreMessageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,7 @@ class AuthLogin extends FormRequest
     public function rules()
     {
         return [
-            'password' => 'required',
-            'email' => 'required|email',
+          'body' => 'required|max:250',
         ];
     }
 }
