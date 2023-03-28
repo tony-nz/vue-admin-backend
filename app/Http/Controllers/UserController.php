@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreUser;
-use App\Http\Requests\UpdateUser;
+use App\Http\Requests\User\StoreUser;
+use App\Http\Requests\User\UpdateUser;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 
-use Illuminate\Http\Request;
+// use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -56,9 +56,9 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateUser $request, $user)
+    public function update(UpdateUser $request, User $user)
     {
-        $user->update($request->except('password'));
+        $user->update($request->except(['passwrord']));
         if ($password = $request->input('password')) {
             $user->password = Hash::make($password);
         }
