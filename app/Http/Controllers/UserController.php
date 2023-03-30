@@ -20,7 +20,8 @@ class UserController extends Controller
      */
     public function index()
     {
-        return $this->sendResponse(UserResource::collection(User::paginate(10)), 'Users retrieved successfully.');
+        // return $this->sendResponse(UserResource::collection(User::paginate(10)), 'Users retrieved successfully.');
+        return $this->sendResponse(UserResource::collection(User::all()), 'Users retrieved successfully.');
     }
 
     /**
