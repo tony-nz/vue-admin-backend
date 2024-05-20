@@ -19,6 +19,7 @@ class User extends Authenticatable implements MustVerifyEmail
    * @var array
    */
   protected $fillable = [
+    'active',
     'name',
     'email',
     'avatar',
@@ -41,6 +42,7 @@ class User extends Authenticatable implements MustVerifyEmail
    * @var array
    */
   protected $casts = [
+    'active' => 'boolean',
     'email_verified_at' => 'datetime',
   ];
 
