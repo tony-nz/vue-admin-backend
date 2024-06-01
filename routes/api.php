@@ -2,10 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\TokenController;
 use App\Http\Controllers\AvatarController;
-use App\Http\Controllers\MessageController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\RoleUserController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\TokenController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,7 +21,6 @@ use App\Http\Controllers\MessageController;
 |
 */
 
-
 Route::middleware(['auth:sanctum'])->group(function () {
 
   Route::group(['prefix' => 'auth'], function () {
@@ -29,14 +31,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
   Route::apiResources([
     'users' => UserController::class,
-    'messages' => MessageController::class,
+    'permissions' => PermissionController::class,
+    'roles' => RoleController::class,
+    'roles/{role}/users' => RoleUserController::class,
+    'settings' => SettingController::class,
   ]);
 
-  // Route::get('/users/{user}', [UserController::class, 'show']);
-  // Route::get('/users', [UserController::class, 'index']);
-
+  /**
+   * Custom user routes
+   */
   Route::post('/users/auth/avatar', [AvatarController::class, 'store']);
 
-  // Route::post('/messages', [MessageController::class, 'store']);
-  // Route::get('/messages', [MessageController::class, 'index']);
 });
