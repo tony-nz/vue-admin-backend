@@ -18,6 +18,7 @@ class RoleAndPermissionSeeder extends Seeder
     $resources = [
       'users',
       'roles',
+      'settings',
       'permissions',
     ];
 
@@ -35,8 +36,5 @@ class RoleAndPermissionSeeder extends Seeder
     // assign all permissions to admin
     $adminRole->givePermissionTo($permissions);
 
-
-    // $user = \App\Models\User::where('email', 'admin@example.com')->first();
-    // $user->assignRole('admin');
   }
 }

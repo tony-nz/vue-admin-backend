@@ -38,6 +38,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
   ]);
 
   /**
+   * Setting routes
+   */
+  Route::put('/settings', [SettingController::class, 'update']);
+
+  /**
    * Custom user routes
    */
   Route::post('/users/auth/avatar', [AvatarController::class, 'store']);

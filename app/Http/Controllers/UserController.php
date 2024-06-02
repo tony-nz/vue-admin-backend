@@ -14,16 +14,28 @@ use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
   /**
+   * Setup controller permissions
+   */
+  function __construct()
+  {
+    $this->middleware('permission:read-users', ['only' => ['index', 'show']]);
+    $this->middleware('permission:create-users', ['only' => ['create', 'store']]);
+    $this->middleware('permission:update-users', ['only' => ['edit', 'update']]);
+    $this->middleware('permission:delete-users', ['only' => ['destroy']]);
+  }
+
+  /**
    * Display a listing of the resource.
    *
    * @return \Illuminate\Http\Response
    */
   public function index(Request $request)
   {
-    // $customers = PrimevueDatatables::of(Customer::with(['customerType'])->query())->make();
-    $customers = PrimevueDatatables::of(User::query())->make();
+    if ($request->has('dt_params')) {
+      return $this->sendResponse(PrimevueDatatables::of(User::with(['roles']))->make(), 'Users retrieved successfully.');
+    }
 
-    return $this->sendResponse($customers, 'Users retrieved successfully.');
+    return $this->sendResponse(UserResource::collection(User::all()), 'Users retrieved successfully.');
   }
 
   /**

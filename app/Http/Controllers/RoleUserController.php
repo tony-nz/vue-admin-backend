@@ -20,8 +20,7 @@ class RoleUserController extends Controller
    */
   function __construct()
   {
-    // $this->middleware('permission:roles-read|roles-create|roles-update|roles-delete', ['only' => ['index', 'store']]);
-    $this->middleware('permission:read-roles', ['only' => ['index', 'store']]);
+    $this->middleware('permission:read-roles', ['only' => ['index', 'show']]);
     $this->middleware('permission:create-roles', ['only' => ['create', 'store']]);
     $this->middleware('permission:update-roles', ['only' => ['edit', 'update']]);
     $this->middleware('permission:delete-roles', ['only' => ['destroy']]);
@@ -34,10 +33,16 @@ class RoleUserController extends Controller
    */
   public function index(Role $role, Request $request)
   {
-    $users = PrimevueDatatables::of(User::with("roles")->whereHas("roles", function ($q) use ($role) {
+    if ($request->has('dt_params')) {
+      return $this->sendResponse(PrimevueDatatables::of(User::with("roles")->whereHas("roles", function ($q) use ($role) {
+        $q->where("name", "=", $role->name);
+      }))->make(), 'Role ' . $role['name'] . ' users retrieved successfully.');
+    }
+
+    return $this->sendResponse(RoleResource::collection(User::with("roles")->whereHas("roles", function ($q) use ($role) {
       $q->where("name", "=", $role->name);
-    }))->make();
-    return $this->sendResponse($users, 'Role ' . $role['name'] . ' users retrieved successfully.');
+    })->get()), 'Role ' . $role['name'] . ' users retrieved successfully.');
+
   }
 
   /**

@@ -2,109 +2,84 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Helpers\PrimevueDatatables;
+use App\Http\Requests\Role\StoreRoleRequest;
+use App\Http\Requests\Role\UpdateRoleRequest;
+use App\Http\Resources\RoleResource;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
-use App\Http\Resources\RoleResource;
-use DB;
 
 class RoleController extends Controller
 {
   /**
-   * Display a listing of the resource.
-   *
-   * @return \Illuminate\Http\Response
+   * Setup controller roles
    */
   function __construct()
   {
-    $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index', 'store']]);
-    $this->middleware('permission:role-create', ['only' => ['create', 'store']]);
-    $this->middleware('permission:role-edit', ['only' => ['edit', 'update']]);
-    $this->middleware('permission:role-delete', ['only' => ['destroy']]);
+    $this->middleware('permission:read-roles', ['only' => ['index', 'show']]);
+    $this->middleware('permission:create-roles', ['only' => ['create', 'store']]);
+    $this->middleware('permission:update-roles', ['only' => ['edit', 'update']]);
+    $this->middleware('permission:delete-roles', ['only' => ['destroy']]);
   }
 
   /**
    * Display a listing of the resource.
-   *
-   * @return \Illuminate\Http\Response
    */
   public function index(Request $request)
   {
-    return $this->sendResponse(RoleResource::collection(Role::orderBy('id', 'DESC')->paginate(10)), 'Roles retrieved successfully.');
+    if ($request->has('dt_params')) {
+      return $this->sendResponse(PrimevueDatatables::of(Role::with(['permissions']))->make(), 'Roles retrieved successfully.');
+    }
+
+    return $this->sendResponse(RoleResource::collection(Role::all()), 'Roles retrieved successfully.');
   }
 
   /**
    * Store a newly created resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
    */
-  public function store(Request $request)
+  public function store(StoreRoleRequest $request)
   {
-    $this->validate($request, [
-      'name' => 'required|unique:roles,name',
-      'permission' => 'required',
-    ]);
+    // add guard name
+    $request['guard_name'] = 'api';
 
-    $role = Role::create(['name' => $request->input('name')]);
-    $role->syncPermissions($request->input('permission'));
+    $role = Role::make($request->all());
+    $role->save();
 
     return $this->sendResponse(new RoleResource($role), 'Role created successfully.');
   }
 
   /**
    * Display the specified resource.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
    */
-  public function show($id)
+  public function show(Role $role)
   {
-    $role = Role::find($id);
-    $rolePermissions = Permission::join("role_has_permissions", "role_has_permissions.permission_id", "=", "permissions.id")
-      ->where("role_has_permissions.role_id", $id)
-      ->get();
+    // include permissions
+    $role->load('permissions');
 
-    return $this->sendResponse([
-      "data" => [
-        'role' => new RoleResource($role),
-        'rolePermissions' => $rolePermissions,
-      ]
-    ], 'Role retrieved successfully.');
+    return $this->sendResponse(new RoleResource($role), 'Role retrieved successfully.');
   }
 
   /**
    * Update the specified resource in storage.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $id)
+  public function update(UpdateRoleRequest $request, Role $role)
   {
-    $this->validate($request, [
-      'name' => 'required',
-      'permission' => 'required',
-    ]);
+    // add guard name
+    $request['guard_name'] = 'api';
 
-    $role = Role::find($id);
-    $role->name = $request->input('name');
-    $role->save();
+    $role->update($request->all());
 
-    $role->syncPermissions($request->input('permission'));
 
     return $this->sendResponse(new RoleResource($role), 'Role updated successfully.');
   }
+
   /**
    * Remove the specified resource from storage.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
    */
-  public function destroy($id)
+  public function destroy(Role $role)
   {
-    DB::table("roles")->where('id', $id)->delete();
+    $role->delete();
+
     return $this->sendResponse([], 'Role deleted successfully.');
   }
 }

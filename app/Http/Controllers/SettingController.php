@@ -10,6 +10,17 @@ use App\Models\Setting;
 class SettingController extends Controller
 {
   /**
+   * Setup controller permissions
+   */
+  function __construct()
+  {
+    $this->middleware('permission:read-settings', ['only' => ['index', 'show']]);
+    $this->middleware('permission:create-settings', ['only' => ['create', 'store']]);
+    $this->middleware('permission:update-settings', ['only' => ['edit', 'update']]);
+    $this->middleware('permission:delete-settings', ['only' => ['destroy']]);
+  }
+
+  /**
    * Display a listing of the resource.
    */
   public function index()
