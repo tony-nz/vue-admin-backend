@@ -7,17 +7,21 @@ use App\Http\Requests\User\StoreUser;
 use App\Http\Requests\User\UpdateUser;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\UserService;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+  protected $userService;
+
   /**
    * Setup controller permissions
    */
-  function __construct()
+  public function __construct(UserService $userService)
   {
+    $this->userService = $userService;
     $this->middleware('permission:read-users', ['only' => ['index', 'show']]);
     $this->middleware('permission:create-users', ['only' => ['create', 'store']]);
     $this->middleware('permission:update-users', ['only' => ['edit', 'update']]);
@@ -92,5 +96,29 @@ class UserController extends Controller
     $user->delete();
 
     return $this->sendResponse([], 'User deleted successfully.');
+  }
+
+  /**
+   * Lock the specified user.
+   * @param \App\Models\User $user
+   * @return \Illuminate\Http\Response
+   */
+  public function lock(User $user)
+  {
+    $this->userService->lockUser($user->id);
+
+    return $this->sendResponse(new UserResource($user), 'User locked successfully.');
+  }
+
+  /**
+   * Unlock the specified user.
+   * @param \App\Models\User $user
+   * @return \Illuminate\Http\Response
+   */
+  public function unlock(User $user)
+  {
+    $this->userService->unlockUser($user->id);
+
+    return $this->sendResponse(new UserResource($user), 'User unlocked successfully.');
   }
 }
