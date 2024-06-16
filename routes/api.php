@@ -45,8 +45,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
   /**
    * Custom user routes
    */
-  Route::post('/users/{id}/lock', [UserController::class, 'lock']);
-  Route::post('/users/{id}/unlock', [UserController::class, 'unlock']);
+  Route::post('/users/{user}/lock', [UserController::class, 'lock']);
+  Route::post('/users/{user}/unlock', [UserController::class, 'unlock']);
   Route::post('/users/auth/avatar', [AvatarController::class, 'store']);
 
 });
