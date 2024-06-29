@@ -6,6 +6,7 @@ use App\Helpers\PrimevueDatatables;
 use App\Http\Requests\User\StoreUser;
 use App\Http\Requests\User\UpdateUser;
 use App\Http\Resources\UserResource;
+use App\Models\Role;
 use App\Models\User;
 use App\Services\UserService;
 
@@ -52,6 +53,12 @@ class UserController extends Controller
   {
     $user = User::make($request->all());
     $user->password = Hash::make($request->input('password'));
+
+    if ($role_ids = $request->input('role_ids')) {
+      $roles = Role::find($role_ids);
+      $user->assignRole($roles);
+    }
+
     $user->save();
 
     return $this->sendResponse(new UserResource($user), 'User created successfully.');
@@ -80,6 +87,11 @@ class UserController extends Controller
     $user->update($request->except(['passwrord']));
     if ($password = $request->input('password')) {
       $user->password = Hash::make($password);
+    }
+
+    if ($role_ids = $request->input('role_ids')) {
+      $roles = Role::find($role_ids);
+      $user->assignRole($roles);
     }
 
     return $this->sendResponse(new UserResource($user), 'User updated successfully.');

@@ -22,6 +22,7 @@ class UserResource extends JsonResource
       'emailVerified' => $this->email_verified_at,
       'active' => $this->active,
       'roles' => $this->roles,
+      'role_ids' => $this->roles->pluck('id'),
       'locked' => $this->locked,
     ];
   }

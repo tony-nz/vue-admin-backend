@@ -28,7 +28,7 @@ class StoreUser extends FormRequest
       'password' => 'confirmed|min:8',
       'email' => 'required|email|unique:users,email',
       'avatar' => 'nullable',
-      'locked' => 'boolean',
+      'locked' => 'nullable|boolean',
     ];
   }
 }

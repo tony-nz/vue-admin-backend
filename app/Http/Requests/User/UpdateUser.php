@@ -30,7 +30,7 @@ class UpdateUser extends FormRequest
       'password' => 'nullable|confirmed|min:8',
       'email' => 'sometimes|required|email|unique:users,email,' . $user->id,
       'avatar' => 'nullable',
-      'locked' => 'boolean',
+      'locked' => 'nullable|boolean',
     ];
   }
 }
