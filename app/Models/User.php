@@ -48,6 +48,18 @@ class User extends Authenticatable implements MustVerifyEmail
     'email_verified_at' => 'datetime',
   ];
 
+  /**
+   * The attributes that should be appended to arrays.
+   * 
+   * @var array
+   */
+  protected $appends = ['role_ids'];
+
+  public function getRoleIdsAttribute()
+  {
+    return $this->roles->pluck('id');
+  }
+
   public function getPermissions()
   {
     return $this->getAllPermissions()->pluck('name');

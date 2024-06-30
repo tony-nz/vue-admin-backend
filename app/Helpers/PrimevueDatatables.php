@@ -93,7 +93,7 @@ class PrimevueDatatables
       })->where(function (Builder $q) use ($localFilters) {
         // Local filters
         foreach ($localFilters as $field => $filter) {
-          if (isset ($filter['constraints'])) {
+          if (isset($filter['constraints'])) {
             foreach ($filter['constraints'] as $const) {
               if ($const["value"]) {
                 $instance = new SearchFilter($field, $const["value"], $const["matchMode"]);
