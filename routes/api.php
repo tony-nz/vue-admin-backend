@@ -48,5 +48,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::post('/users/{user}/lock', [UserController::class, 'lock']);
   Route::post('/users/{user}/unlock', [UserController::class, 'unlock']);
   Route::post('/users/auth/avatar', [AvatarController::class, 'store']);
+  Route::post('/users/{user}/password', [UserController::class, 'changePassword']);
 
 });

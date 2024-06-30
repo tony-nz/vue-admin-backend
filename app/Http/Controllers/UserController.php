@@ -24,8 +24,8 @@ class UserController extends Controller
   {
     $this->userService = $userService;
     $this->middleware('permission:read-users', ['only' => ['index', 'show']]);
-    $this->middleware('permission:create-users', ['only' => ['create', 'store']]);
-    $this->middleware('permission:update-users', ['only' => ['edit', 'update']]);
+    $this->middleware('permission:create-users', ['only' => ['create', 'store', 'changePassword']]);
+    $this->middleware('permission:update-users', ['only' => ['edit', 'update', 'changePassword']]);
     $this->middleware('permission:delete-users', ['only' => ['destroy']]);
   }
 
@@ -133,4 +133,20 @@ class UserController extends Controller
 
     return $this->sendResponse(new UserResource($user), 'User unlocked successfully.');
   }
+
+  /**
+   * Change password for the specified user.
+   */
+  public function changePassword(Request $request, User $user)
+  {
+    $this->validate($request, [
+      'password' => 'required|confirmed|min:8',
+    ]);
+
+    $user->password = Hash::make($request->input('password'));
+    $user->save();
+
+    return $this->sendResponse(new UserResource($user), 'Password changed successfully.');
+  }
+
 }
