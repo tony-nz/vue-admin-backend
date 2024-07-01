@@ -136,6 +136,8 @@ class UserController extends Controller
 
   /**
    * Change password for the specified user.
+   * @param \App\Models\User $user
+   * @return \Illuminate\Http\Response
    */
   public function changePassword(Request $request, User $user)
   {
